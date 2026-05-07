@@ -7,7 +7,7 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const Avatar = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement> & AvatarProps>(
+export const Avatar = React.memo(React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement> & AvatarProps>(
   ({ className, src, fallback, alt, size = 'md', ...props }, ref) => {
     const [imgError, setImgError] = useState(false);
 
@@ -16,6 +16,15 @@ export const Avatar = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTML
       md: 'h-12 w-12 text-xl',
       lg: 'h-16 w-16 text-2xl',
     };
+
+    const isSafeUrl = (url?: string) => {
+      if (!url) return false;
+      const lowerUrl = url.trim().toLowerCase();
+      if (lowerUrl.startsWith('javascript:')) return false;
+      return true;
+    };
+
+    const safeSrc = isSafeUrl(src) ? src : undefined;
 
     return (
       <div
@@ -27,9 +36,9 @@ export const Avatar = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTML
         )}
         {...props}
       >
-        {src && !imgError ? (
+        {safeSrc && !imgError ? (
           <img
-            src={src}
+            src={safeSrc}
             alt={alt || "Avatar"}
             className="aspect-square h-full w-full object-cover"
             onError={() => setImgError(true)}
@@ -42,6 +51,6 @@ export const Avatar = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTML
       </div>
     );
   }
-);
+));
 
 Avatar.displayName = "Avatar";

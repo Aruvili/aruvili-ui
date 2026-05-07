@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useMemo, useCallback } from 'react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { TabsProps, TabsListProps, TabsTriggerProps, TabsContentProps } from '@aruvili/specs/tabs';
@@ -21,15 +21,20 @@ export const Tabs = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDi
     const isControlled = controlledValue !== undefined;
     const value = isControlled ? controlledValue : uncontrolledValue;
     
-    const onValueChange = (newValue: string) => {
+    const onValueChange = useCallback((newValue: string) => {
       if (!isControlled) {
         setUncontrolledValue(newValue);
       }
       setControlledValue?.(newValue);
-    };
+    }, [isControlled, setControlledValue]);
+
+    const contextValue = useMemo(
+      () => ({ value, onValueChange }),
+      [value, onValueChange]
+    );
 
     return (
-      <TabsContext.Provider value={{ value, onValueChange }}>
+      <TabsContext.Provider value={contextValue}>
         <div ref={ref} className={cn("w-full", className)} {...props} />
       </TabsContext.Provider>
     );

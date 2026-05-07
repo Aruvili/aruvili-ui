@@ -7,7 +7,7 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const Badge = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement> & BadgeProps>(
+export const Badge = React.memo(React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement> & BadgeProps>(
   ({ className, variant = 'default', ...props }, ref) => {
     
     const variants = {
@@ -29,6 +29,6 @@ export const Badge = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLD
       />
     );
   }
-);
+));
 
 Badge.displayName = "Badge";
